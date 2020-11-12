@@ -1,3 +1,15 @@
+compdef _ghgh ghgh
+
+function _ghgh(){
+  for f in
+    _describe 'command' "('cmd1:description1' 'cmd2:description2')"
+    compadd "echo yoyoyoyo"
+}
+
+function ghgh(){
+    ~/.config/scripts/upgrade.sh $1
+}
+#alias test="echo test_command"
 # Ignore checking for multiple antigens running simultaneously
 ANTIGEN_MUTEX=false
 
