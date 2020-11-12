@@ -153,6 +153,7 @@ alias tree="tree -a -I 'node_modules|.git' -L 4"
 alias u="..; ls -lht"
 alias uu="...; ls -lht"
 alias uuu="....; ls -lht"
+alias upgrade="~/.config/scripts/upgrade.sh"
 alias v=vcsh
 alias vcshp="VCSH_REPO_D=$HOME/.config/vcsh/repo-private.d vcsh"
 alias vd="vcsh foreach diff"
