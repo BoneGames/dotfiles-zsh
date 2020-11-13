@@ -140,6 +140,7 @@ alias n='nano $(lastarg)'
 alias pastebin="curl -F 'f:1=<-' ix.io"
 alias pdf="zathura"
 alias ptree="ps xf -o pid,ppid,pgrp,euser,args"
+alias rascii="~/.config/scripts/rascii.sh"
 alias rmf="rm -rf"
 alias sa='sudo $(last)'
 alias scripts="cat package.json | jq .scripts"

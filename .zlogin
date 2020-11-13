@@ -5,9 +5,9 @@ if echo $HOSTNAME | grep -q laptop; then
 elif echo $HOSTNAME | grep -q desktop; then
   ascii DESKTOP
 else
-  ascii CLOUD
+  rascii "$HOSTNAME"
 fi
-echo
+
 
 # Print container build info if present
 if [ ! -z "$CONTAINER_BUILD_DATE" ]; then
