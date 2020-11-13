@@ -1,15 +1,34 @@
-compdef _ghgh ghgh
+compdef _upgrade upgrade
 
-function _ghgh(){
-  for f in
-    _describe 'command' "('cmd1:description1' 'cmd2:description2')"
-    compadd "echo yoyoyoyo"
+function _upgrade(){
+  installerDir="/home/$USER/.config/scripts/install/"
+
+  # Init State Arrays
+  installed=()
+  notinstalled=()
+
+  # Get Install State
+  for f in ${installerDir}*.sh; do
+    name=$(basename $f | sed -r 's/(.+?).sh/\1/')
+    which $name >/dev/null 2>&1;
+    if [ "$?" = 0 ]; then
+      installed+=("$name")
+    else
+      notinstalled+=("$name")
+    fi
+  done
+
+  for p in $notinstalled; do
+    if [[ "$p" = *"$words[2]"* ]]; then
+      compadd "$p"
+    fi;
+  done
 }
 
-function ghgh(){
+function upgrade(){
     ~/.config/scripts/upgrade.sh $1
 }
-#alias test="echo test_command"
+
 # Ignore checking for multiple antigens running simultaneously
 ANTIGEN_MUTEX=false
 
@@ -165,7 +184,6 @@ alias tree="tree -a -I 'node_modules|.git' -L 4"
 alias u="..; ls -lht"
 alias uu="...; ls -lht"
 alias uuu="....; ls -lht"
-alias upgrade="~/.config/scripts/upgrade.sh"
 alias v=vcsh
 alias vcshp="VCSH_REPO_D=$HOME/.config/vcsh/repo-private.d vcsh"
 alias vd="vcsh foreach diff"
