@@ -1,34 +1,5 @@
 compdef _upgrade upgrade
 
-function _upgrade(){
-  installerDir="/home/$USER/.config/scripts/install/"
-
-  # Init State Arrays
-  installed=()
-  notinstalled=()
-
-  # Get Install State
-  for f in ${installerDir}*.sh; do
-    name=$(basename $f | sed -r 's/(.+?).sh/\1/')
-    which $name >/dev/null 2>&1;
-    if [ "$?" = 0 ]; then
-      installed+=("$name")
-    else
-      notinstalled+=("$name")
-    fi
-  done
-
-  for p in $notinstalled; do
-    if [[ "$p" = *"$words[2]"* ]]; then
-      compadd "$p"
-    fi;
-  done
-}
-
-function upgrade(){
-    ~/.config/scripts/upgrade.sh $1
-}
-
 # Ignore checking for multiple antigens running simultaneously
 ANTIGEN_MUTEX=false
 
@@ -229,4 +200,33 @@ transfer () {
 
 cpx () {
   cat $HISTFILE | tail -2 | head -1 | cut -c 16- | clipboard
+}
+
+function _upgrade(){
+  installerDir="/home/$USER/.config/scripts/install/"
+
+  # Init State Arrays
+  installed=()
+  notinstalled=()
+
+  # Get Install State
+  for f in ${installerDir}*.sh; do
+    name=$(basename $f | sed -r 's/(.+?).sh/\1/')
+    which $name >/dev/null 2>&1;
+    if [ "$?" = 0 ]; then
+      installed+=("$name")
+    else
+      notinstalled+=("$name")
+    fi
+  done
+
+  for p in $notinstalled; do
+    if [[ "$p" = *"$words[2]"* ]]; then
+      compadd "$p"
+    fi;
+  done
+}
+
+function upgrade(){
+    ~/.config/scripts/upgrade.sh $1
 }
