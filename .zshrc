@@ -231,3 +231,5 @@ function _upgrade(){
 function upgrade(){
     ~/.config/scripts/upgrade.sh $1
 }
+
+~/.config/scripts/set-resolution.sh
