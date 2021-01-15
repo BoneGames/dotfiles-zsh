@@ -7,7 +7,7 @@ elif echo $HOSTNAME | grep -q desktop; then
 else
   rascii "$HOSTNAME"
 fi
-
+echo
 
 # Print container build info if present
 if [ ! -z "$CONTAINER_BUILD_DATE" ]; then
@@ -24,6 +24,11 @@ if [ ! -z "$CONTAINER_BUILD_DATE" ]; then
   COLOURED_CONTAINER_IMAGE_NAME="$MAGENTA${CONTAINER_IMAGE_NAME}$WHITE"
 
   echo "$COLOURED_CONTAINER_IMAGE_NAME | built $COLOURED_TIME_SINCE_CONTAINER_BUILD | $COLOURED_CONTAINER_GIT_SHA"
+fi
+
+# Set the default directory to the repositories folder
+if [ "$PWD" = "$HOME" ] && [ -d ~/repositories ]; then
+  cd ~/repositories
 fi
 
 # Log current working directory structure
