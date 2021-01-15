@@ -1,5 +1,3 @@
-compdef _upgrade upgrade
-
 # Ignore checking for multiple antigens running simultaneously
 ANTIGEN_MUTEX=false
 
@@ -57,20 +55,19 @@ wal -Req 2>/dev/null
 FZF_DEFAULT_OPTS="--bind=ctrl-j:accept"
 
 # Additional zle bindings
-bindkey -M vicmd 'j' history-beginning-search-forward
-bindkey -M vicmd 'k' history-beginning-search-backward
-bindkey -M vicmd '^r' fzf-history-widget
-bindkey '^[b' backward-word
-bindkey '^[d' kill-word
-bindkey '^[f' forward-word
-bindkey '^[h' backward-kill-word
+bindkey -s '^[i' 'l^M'
 bindkey '^[.' insert-last-word
+bindkey '^[b' vi-backward-word
+bindkey '^[d' kill-word
+bindkey '^[f' vi-forward-word
 bindkey '^a' beginning-of-line
 bindkey '^e' end-of-line
 bindkey '^b' backward-char
+bindkey '^d' delete-char
 bindkey '^f' forward-char
 bindkey '^p' up-line-or-history
 bindkey '^r' fzf-history-widget
+bindkey '^w' vi-backward-kill-word
 
 # Load jump shell
 eval "$(jump shell zsh)"
@@ -113,6 +110,7 @@ alias pu="git pu"
 alias puf="git puf"
 alias puu="git puu"
 alias pun="git pun"
+alias r="/opt/desktop-environment/run.sh"
 alias rbm="git rbm"
 alias s="git s"
 alias st="git st"
@@ -124,15 +122,14 @@ alias ar="sudo apt-get remove -y"
 alias as="apt-file find"
 alias apt-ls="dpkg-query -L"
 alias ascii="figlet -f slant -m 2"
-alias cat=bat
-alias clip=clipboard
+alias cat="bat --style plain"
 alias g="grep -iE"
 alias get="git clone"
 alias gv="grep -ivE"
 alias gottyc="gotty-client --v2"
 alias h="~/.config/scripts/ssh-host-tty.sh"
 alias ip="curl ip-api.com"
-alias l="ls -lah"
+alias l="ls -lahG --group-directories-first"
 alias lastarg='echo $(last) | sed s/.*\ //'
 alias last='echo $(fc -ln -1)'
 alias mkx="chmod +x"
@@ -203,33 +200,44 @@ cpx () {
   cat $HISTFILE | tail -2 | head -1 | cut -c 16- | clipboard
 }
 
-function _upgrade(){
-  installerDir="/home/$USER/.config/scripts/install/"
+function cd-redraw-prompt() {
+  {
+    builtin echoti civis
+    builtin local f
+    for f in chpwd "${chpwd_functions[@]}" precmd "${precmd_functions[@]}"; do
+      (( ! ${+functions[$f]} )) || "$f" &>/dev/null || builtin true
+    done
+    builtin zle reset-prompt
+  } always {
+    builtin echoti cnorm
+  }
+}
 
-  # Init State Arrays
-  installed=()
-  notinstalled=()
+function cd-rotate() {
+  () {
+    builtin emulate -L zsh
+    while (( $#dirstack )) && ! builtin pushd -q $1 &>/dev/null; do
+      builtin popd -q $1
+    done
+    (( $#dirstack ))
+  } "$@" && cd-redraw-prompt
+}
 
-  # Get Install State
-  for f in ${installerDir}*.sh; do
-    name=$(basename $f | sed -r 's/(.+?).sh/\1/')
-    which $name >/dev/null 2>&1;
-    if [ "$?" = 0 ]; then
-      installed+=("$name")
-    else
-      notinstalled+=("$name")
-    fi
-  done
+function cd-up() { builtin cd -q .. && cd-redraw-prompt; }
+function cd-back() { cd-rotate +1; }
+function cd-forward() { cd-rotate -0; }
 
-  for p in $notinstalled; do
-    if [[ "$p" = *"$words[2]"* ]]; then
-      compadd "$p"
-    fi;
+builtin zle -N cd-up
+builtin zle -N cd-back
+builtin zle -N cd-forward
+
+() {
+  builtin local keymap
+  for keymap in emacs viins vicmd; do
+    builtin bindkey '^[u' cd-up
+    builtin bindkey '^[-' cd-back
+    builtin bindkey '^[_' cd-forward
   done
 }
 
-function upgrade(){
-    ~/.config/scripts/upgrade.sh $1
-}
-
-~/.config/scripts/set-resolution.sh
+setopt auto_pushd
