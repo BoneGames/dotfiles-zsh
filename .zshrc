@@ -70,7 +70,7 @@ bindkey '^r' fzf-history-widget
 bindkey '^w' vi-backward-kill-word
 
 # volume keys
-bindkey -s '^[[17~' '^uamixer -c 0 set "Master" 5%+^M'
+bindkey -s '^[[17~' '^uamixer -c 0 set "Master" 5%-^M'
 bindkey -s '^[[18~' '^uamixer -c 0 set "Master" 5%+^M'
 
 # Load jump shell
